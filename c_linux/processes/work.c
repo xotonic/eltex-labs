@@ -17,13 +17,13 @@ float avg(float* a, int n)
 
 int main()
 {
-  srand(time(0));
-  int n = rand()%1000;
+  srand(getpid());
+  int n = rand()%10000000;
   float* mem = (float*)malloc(sizeof(float)* n);
   for (int i = 0; i < n; i++)
       mem[i] = rand()%1000;
   float average = avg(mem, n);
-  printf("Child: pid = %d\tavg = %f\n", (int)getpid(), average);
+  printf("Child: pid = %d\tavg = %f\tn = %d\n", (int)getpid(), average, n);
   free(mem);
   return 0;
 }
