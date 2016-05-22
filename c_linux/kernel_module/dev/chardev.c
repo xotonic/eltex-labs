@@ -19,6 +19,7 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/fs.h>
+#include <linux/random.h>
 #include <asm/uaccess.h>        /* определение функции put_user */
 
 MODULE_LICENSE("GPL");
@@ -46,8 +47,10 @@ static int Major;             /* Старший номер устройства 
 static int Device_Open = 0;   /* Устройство открыто?
                                * используется для предотвращения одновременного
                                * обращения из нескольких процессов */
+static char Message[BUF_LEN];     /* Здесь будет собираться текст сообщения */
 static char msg[BUF_LEN];     /* Здесь будет собираться текст сообщения */
 static char *msg_Ptr;
+static int rand_min = 0, rand_max = 1000;
 
 static struct file_operations fops = {
   .read = device_read,
@@ -59,6 +62,45 @@ static struct file_operations fops = {
 /*
  * Функции
  */
+
+
+/*
+        Находит среднее по масссиву a размерности n
+*/
+int avg(int *a, int n) {
+  int sum = 0;
+  int i;
+  int avg;
+  for (i = 0; i < n; i++) {
+    sum += a[i];
+  }
+  avg = sum / n;
+  return avg;
+}
+
+/*
+ *  Генерирует массив и вычисляет его среднее
+ */
+static int mem[BUF_LEN];
+
+int work(int randmin, int randmax)
+{
+  int n = BUF_LEN;//rand()%1000;
+  int i, average;
+  int random;
+  //srand(sseed);
+  //float* mem = (float*)malloc(sizeof(float)* n);
+  for (i = 0; i < n; i++)
+  {
+      random = get_random_int();
+      if (random < 0) random = - random;
+      mem[i] = randmin + random%(randmax - randmin);
+  }
+  average = avg(mem, n);
+  //printf("Child: pid = %d\tavg = %f\n", (int)getpid(), average);
+  //free(mem);
+  return average;
+}
 
 int init_module(void)
 {
@@ -82,8 +124,6 @@ void cleanup_module(void)
    */
     printk(PREFIX"Cleaning up module\n");
     unregister_chrdev(Major, DEVICE_NAME);
-  /*if (ret < 0)
-    printk("Error in unregister_chrdev: %d\n", ret);*/
 }
 
 /*
@@ -96,12 +136,14 @@ void cleanup_module(void)
  */
 static int device_open(struct inode *inode, struct file *file)
 {
-  static int counter = 0;
+  //static int counter = 0;
   printk(PREFIX"Device file opened\n");
   if (Device_Open)
     return -EBUSY;
   Device_Open++;
-  sprintf(msg, "I already told you %d times Hello world!\n", counter++);
+  //sprintf(msg, "OPEN %d\n", counter++);
+  printk(PREFIX"Random min = %d, max = %d\n", rand_min, rand_max);
+  sprintf(msg, "%d\n", work(rand_min, rand_max));
   msg_Ptr = msg;
   try_module_get(THIS_MODULE);
 
@@ -163,7 +205,7 @@ static ssize_t device_read(struct file *filp, /* см. include/linux/fs.h   */
 
     length--;
     bytes_read++;
-        }
+  }
 
   /*
    * В большинстве своем, функции чтения возвращают количество байт, записанных в буфер.
@@ -172,13 +214,23 @@ static ssize_t device_read(struct file *filp, /* см. include/linux/fs.h   */
 }
 
 /*
- * Вызывается, когда процесс пытается записать в устройство,
  * например так: echo "hi" > /dev/chardev
+ * Вызывается, когда процесс пытается записать в устройство,
  */
 static ssize_t
 device_write(struct file *filp, const char *buff, size_t len, loff_t * off)
 {
+  int parsed = 0, i;
   printk(PREFIX"Writing to device file\n");
-  return -ENOSYS;
-}
+  for (i = 0; i < len && i < BUF_LEN; i++)
+   get_user(Message[i], buff + i);
 
+ //Message_Ptr = Message;
+  parsed = sscanf(Message, "%d %d", &rand_min, &rand_max);
+  if (parsed != 2) return -EINVAL;
+ /*
+  * Вернуть количество принятых байт
+  */
+ return i;
+  //return -ENOSYS;
+}
