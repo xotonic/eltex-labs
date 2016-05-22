@@ -8,7 +8,9 @@
 #	$(MAKE) -C $(KDIR) M=$$PWD
 #endif
 CONFIG_MODULE_SIG=n
-obj-m += mymodule.o
+
+#obj-m += mymodule.o
+obj-m += chardev.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
