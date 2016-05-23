@@ -15,9 +15,8 @@
 для работы с плавающей точкой и добавить функционал довольно сложно и вообще не
 рекомендуется.
 
-Машина, на которой проводилось тестирование и сборка:
-Linux osboxes 4.2.0-16-generic #19-Ubuntu SMP Thu Oct 8 15:35:06 UTC 2015 x86_64
-x86_64 x86_64 GNU/Linux
+Версия ядра, на которой проводилось тестирование и сборка:
+4.2.0-16-generic
 
 ПРОЦЕСС СБОРКИ И ПРИМЕР ЗАПУСКА
 -------------------------------
@@ -27,32 +26,24 @@ dmesg -w
 # После чего в новом терминале
 make
 insmod chardev.ko
-# создание файла устройства
-# major - старший номер уст-ва, виден в dmesg после инициализации модуля
-mknod /dev/chardev c [major] 0
 cat /dev/chardev
 echo "-1000 1000" > /dev/chardev
 cat /dev/chardev
-
-# удаление файла устройства и выгрузка модуля
-rm -fR /dev/chardev
+# выгрузка модуля
 rmmod chardev.ko
 
 
 Пример вывода dmesg:
-[32451.434727] chardev: Initialising module. Major number = 247.
-[32481.683815] chardev: Device file opened
-[32481.683819] chardev: Random min = 0, max = 1000
-[32481.683838] chardev: Reading from device file
-[32481.683915] chardev: Reading from device file
-[32481.683928] chardev: Device file closed
-[32492.493309] chardev: Device file opened
-[32492.493312] chardev: Random min = 0, max = 1000
-[32492.493332] chardev: Writing to device file
-[32492.493336] chardev: Device file closed
-[32507.261250] chardev: Device file opened
-[32507.261253] chardev: Random min = -1000, max = 1000
-[32507.261269] chardev: Reading from device file
-[32507.261310] chardev: Reading from device file
-[32507.261320] chardev: Device file closed
-[32567.778482] chardev: Cleaning up module
+[ 9262.426215] chardev: Initialising module. Major number = 247.
+[ 9262.426218] chardev: Creating device node
+[ 9271.294840] chardev: Device file opened
+[ 9271.294844] chardev: Random min = 0, max = 1000
+[ 9271.294917] chardev: Writing to device file
+[ 9271.294920] chardev: Device file closed
+[ 9274.589082] chardev: Device file opened
+[ 9274.589085] chardev: Random min = -1000, max = 1000
+[ 9274.589155] chardev: Reading from device file
+[ 9274.589195] chardev: Reading from device file
+[ 9274.589206] chardev: Device file closed
+[ 9280.191009] chardev: Deleting device node
+[ 9280.191907] chardev: Cleaning up module

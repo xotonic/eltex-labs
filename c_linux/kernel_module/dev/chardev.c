@@ -4,10 +4,10 @@
  * =====
  * dmesg -w
  * insmod chardev.ko
- * mknod /dev/chardev c [major] 0
+ * ### mknod /dev/chardev c [major] 0 ### NOW IN CODE ROUTINE
  * cat /dev/chardev
- * echo "[seed]" > /dev/chardev
- * rm -fR /dev/chardev
+ * echo "<min> <max>" > /dev/chardev
+ * ### rm -fR /dev/chardev ### NOW IN CODE ROUTINE
  * rmmod chardev.ko
  */
 
@@ -66,9 +66,6 @@ static struct file_operations fops = {.read = device_read,
                                       .open = device_open,
                                       .release = device_release};
 
-/*
- * Функции
- */
 
 /*
         Находит среднее по масссиву a размерности n
@@ -93,17 +90,13 @@ int work(int randmin, int randmax) {
   int n = BUF_LEN; // rand()%1000;
   int i, average;
   int random;
-  // srand(sseed);
-  // float* mem = (float*)malloc(sizeof(float)* n);
   for (i = 0; i < n; i++) {
-    random = get_random_int();
+    get_random_bytes(&random,sizeof(random));
     if (random < 0)
       random = -random;
     mem[i] = randmin + random % (randmax - randmin);
   }
   average = avg(mem, n);
-  // printf("Child: pid = %d\tavg = %f\n", (int)getpid(), average);
-  // free(mem);
   return average;
 }
 
