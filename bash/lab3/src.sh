@@ -1,15 +1,28 @@
 #!/bin/bash
-echo "= CURRENT ALARMS ="
 
-while read line
-do
-  #echo -e "$line"
-  #echo ?????????
-done <alarms.txt
+print_alarms()
+{
+    echo "= CURRENT ALARMS ="
+    id=1
+    while read line
+    do
+        read m h z <<< "$line"
+        echo "$id) $h : $m"
+        ((id++))
+    done <alarms.txt
 
-echo "=================="
+    if [ $id -eq 1 ]
+    then
+      echo "NO ALARMS"
+    fi
+    echo "=================="
+}
+
+print_alarms
 echo "1 - New alarm"
 echo "2 - Delete alarm"
+echo "3 - Print alarms"
+echo "9 - Save and exit"
 echo "0 - Exit"
 
 
@@ -24,6 +37,11 @@ do
     0)
     echo "EXIT"
     ;;
+    9)
+    echo "SAVE AND EXIT"
+    crontab alarms.txt
+    ans=0
+    ;;
     1)
     echo "CREATE"
     printf "HOURS>>"
@@ -36,6 +54,13 @@ do
     ;;
     2)
     echo "DELETE"
+    printf "ID>>"
+    read id
+    sed -i "$id d" alarms.txt
+    echo "OK"
+    ;;
+    3)
+    print_alarms
     ;;
     *)
     echo "UNKNOWN"
