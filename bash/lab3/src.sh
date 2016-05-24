@@ -1,5 +1,5 @@
 #!/bin/bash
-
+toilet -F gay Super alarm
 print_alarms()
 {
     echo "= CURRENT ALARMS ="
@@ -13,12 +13,22 @@ print_alarms()
 
     if [ $id -eq 1 ]
     then
-      echo "NO ALARMS"
+      echo "  NO ALARMS"
     fi
     echo "=================="
 }
 
+update_cron()
+{
+  crontab -l > tmp
+  sed -i '/meow.mp3/d' tmp
+  cat alarms.txt >> tmp
+  crontab tmp
+  echo "OK"
+}
+
 print_alarms
+printf "\n"
 echo "1 - New alarm"
 echo "2 - Delete alarm"
 echo "3 - Print alarms"
@@ -39,7 +49,8 @@ do
     ;;
     9)
     echo "SAVE AND EXIT"
-    crontab alarms.txt
+    #crontab alarms.txt
+    update_cron
     ans=0
     ;;
     1)
