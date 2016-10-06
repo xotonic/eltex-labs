@@ -6,12 +6,12 @@
 Дочерние процессы получают на вход ID семафора и памяти,
 читают и изменяют ее. Делать это одновременно может только 1 процесс,
 остальные встают в очередь.
-Затем по нажатию <ENTER> родитель освободает память и удаляет семафор
+Затем по нажатию <kbd>ENTER</kbd> родитель освободает память и удаляет семафор
 
 USAGE
-=====
-
->> ./sem
+-----
+```
+$ ./sem
 Creating new semaphore: max 1 processes
 Generating 1000000 random numbers...
 Starting 10 processes...
@@ -36,6 +36,7 @@ pid 7937: Unlocked - 0, avg = 127884.273438
 pid 7938: Locked - 0
 pid 7936: Unlocked - 0, avg = 63942.136719
 pid 7938: Unlocked - 1, avg = 255768.546875
->> <ENTER>
+$ <ENTER>
 Removing shared memory and semaphore...
 Done
+```

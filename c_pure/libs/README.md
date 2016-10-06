@@ -1,17 +1,20 @@
-# 4.2. Оформить статическую библиотеку функций и написать программу, ее использующую.
+> 4.2. Оформить статическую библиотеку функций и написать программу, ее использующую.
 
-osboxes@osboxes:~/Documents/c_pure/libs$ ./main_static
+```
+$ ./main_static
 Static lib example
 Insert A and B floats
 40 40
 sum	80.000000
 sub	0.000000
 mult	1600.000000
+```
 
 
-# 4.3. Переоформить библиотеку, как динамическую, но подгружать статически, при компиляции.
+> 4.3. Переоформить библиотеку, как динамическую, но подгружать статически, при компиляции.
 
-# указываем системе путь до либы
+Указываем системе путь до либы
+```
 LD_LIBRARY_PATH=~/Documents/c_pure/libs
 export LD_LIBRARY_PATH
 ./main_dynamic_linked 
@@ -22,12 +25,12 @@ Insert A and B floats
 sum	60.000000
 sub	20.000000
 mult	800.000000
+```
+> 4.4. Изменить программу для динамической загрузки функций из библиотеки
 
-# 4.4. Изменить программу для динамической загрузки функций из библиотеки
-
-# проверяем символы
-
-osboxes@osboxes:~/Documents/c_pure/libs$ nm -g libmylib.so 
+Проверяем символы
+```
+$ nm -g libmylib.so 
 0000000000201030 B __bss_start
                  w __cxa_finalize@@GLIBC_2.2.5
 0000000000201030 D _edata
@@ -42,7 +45,7 @@ osboxes@osboxes:~/Documents/c_pure/libs$ nm -g libmylib.so
 00000000000006ea T sub	<-----------------------! наши функции
 00000000000006d0 T sum	<-----------------------!
 
-osboxes@osboxes:~/Documents/c_pure/libs$ ./main_runtime 
+$ ./main_runtime 
 Runtime linking example
 Insert A and B floats
 40 40
@@ -50,3 +53,4 @@ sum	80.000000
 sub	0.000000
 mult	1600.000000
 
+```
